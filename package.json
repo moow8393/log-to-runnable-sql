@@ -1,0 +1,68 @@
+{
+  "name": "replace-sql-parameters",
+  "publisher": "moow77",
+  "displayName": "Log to Runnable SQL (SQLAlchemy)",
+  "description": "Convert SQLAlchemy logs with parameters into executable, formatted SQL.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "icon": "resources/icon.png",
+  "repository": {},
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": [
+    "Data Science",
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "SQLAlchemy",
+    "SQL",
+    "Formatter",
+    "Log",
+    "Python",
+    "ORM",
+    "Database",
+    "Debug"
+  ],
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.openSqlPreview",
+        "title": "SQL Fill: Preview Parameters"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "package": "vsce ls && npm run compile && vsce package"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.103.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1"
+  },
+  "dependencies": {
+    "sql-formatter": "^15.6.12"
+  }
+}
