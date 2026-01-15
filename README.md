@@ -49,4 +49,6 @@ This extension helps developers who work with SQLAlchemy or other Python ORMs to
 
 ---
 
+**GitHub Repository**: https://github.com/moow8393/log-to-runnable-sql
+
 **Happy Debugging!**
