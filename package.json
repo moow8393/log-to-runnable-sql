@@ -3,7 +3,7 @@
   "publisher": "moow77",
   "displayName": "Log to Runnable SQL (SQLAlchemy)",
   "description": "Convert SQLAlchemy logs with parameters into executable, formatted SQL.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "icon": "resources/icon.png",
   "repository": {},
