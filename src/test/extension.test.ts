@@ -158,7 +158,17 @@ parameters: {'id': 1}`;
 			const input = `SELECT * FROM users WHERE name = %(name)s
 {'name': "O'Brien"}`;
 			const result = processSqlLog(input);
-			assert.ok(result.includes("O'Brien"), 'Should handle special characters');
+			// Single quotes must be doubled so the SQL string literal stays valid
+			assert.ok(result.includes("'O''Brien'"), 'Should escape single quotes in string values');
+		});
+
+		test('Should handle datetime parameters', () => {
+			const input = `SELECT * FROM invoice WHERE created_at BETWEEN %(start)s AND %(end)s
+{'start': datetime.datetime(2025, 11, 11, 0, 0), 'end': datetime.datetime(2025, 12, 31, 23, 59, 59, 999999)}`;
+			const result = processSqlLog(input);
+			assert.ok(result.includes("'2025-11-11 00:00:00'"), 'Should format datetime without microseconds');
+			assert.ok(result.includes("'2025-12-31 23:59:59.999999'"), 'Should format datetime with microseconds');
+			assert.ok(!result.includes('%('), `Should not leave placeholders. Got: ${result}`);
 		});
 
 		test('Should handle empty parameter object', () => {

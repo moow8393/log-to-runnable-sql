@@ -3,7 +3,7 @@
   "publisher": "moow77",
   "displayName": "Log to Runnable SQL (SQLAlchemy)",
   "description": "Convert SQLAlchemy logs with parameters into executable, formatted SQL.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "icon": "resources/icon.png",
   "repository": {
@@ -33,7 +33,7 @@
     "color": "#1e1e1e",
     "theme": "dark"
   },
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -46,13 +46,16 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run check-types && node esbuild.js --production",
+    "check-types": "tsc --noEmit -p ./",
+    "esbuild": "node esbuild.js",
+    "esbuild-watch": "node esbuild.js --watch",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test",
-    "package": "vsce ls && npm run compile && vsce package"
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -60,6 +63,7 @@
     "@types/vscode": "^1.103.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.1",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",

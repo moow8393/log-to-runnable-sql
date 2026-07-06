@@ -123,6 +123,32 @@ function getWebviewHtml(webview: vscode.Webview, extensionUri: vscode.Uri): stri
 </html>`;
 }
 
+/**
+ * Convert a Python `datetime.datetime/date/time(...)` literal into a SQL
+ * datetime string. Returns the value without surrounding quotes; the caller
+ * treats it as a string and quotes it during replacement.
+ */
+function formatPythonDatetime(literal: string): string {
+    const m = literal.match(/^datetime\.(datetime|date|time)\(([^)]*)\)$/);
+    if (!m) return literal;
+
+    const kind = m[1];
+    const nums = m[2].split(',').map((s) => parseInt(s.trim(), 10));
+    const pad = (n: number | undefined, len = 2) => String(n ?? 0).padStart(len, '0');
+
+    if (kind === 'date') {
+        const [y, mo, d] = nums;
+        return `${pad(y, 4)}-${pad(mo)}-${pad(d)}`;
+    }
+    if (kind === 'time') {
+        const [h, mi, s, us] = nums;
+        return `${pad(h)}:${pad(mi)}:${pad(s)}${us ? `.${pad(us, 6)}` : ''}`;
+    }
+    // datetime
+    const [y, mo, d, h, mi, s, us] = nums;
+    return `${pad(y, 4)}-${pad(mo)}-${pad(d)} ${pad(h)}:${pad(mi)}:${pad(s)}${us ? `.${pad(us, 6)}` : ''}`;
+}
+
 export function processSqlLog(input: string): string {
     if (!input.trim()) return "-- Waiting for input...";
 
@@ -139,7 +165,7 @@ export function processSqlLog(input: string): string {
      * Supports: 'key': 'value', 'key': "value", 'key': None, 'key': 123
      * Specifically handles cases like "O'Brien" where internal quotes exist.
      */
-    const pairRegex = /['"](.+?)['"]\s*:\s*('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|None|True|False|[\d\.]+)/g;
+    const pairRegex = /['"](.+?)['"]\s*:\s*(datetime\.\w+\([^)]*\)|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|None|True|False|[\d\.]+)/g;
     let match;
     while ((match = pairRegex.exec(paramStr)) !== null) {
         const k = match[1];
@@ -148,6 +174,7 @@ export function processSqlLog(input: string): string {
         if (v === 'None') v = null;
         else if (v === 'True') v = true;
         else if (v === 'False') v = false;
+        else if (v.startsWith('datetime.')) v = formatPythonDatetime(v);
         else if ((v.startsWith("'") && v.endsWith("'")) || (v.startsWith('"') && v.endsWith('"'))) {
             // Remove surrounding quotes and handle escape characters (e.g., \' -> ')
             v = v.slice(1, -1).replace(/\\'/g, "'").replace(/\\"/g, '"');
@@ -190,7 +217,8 @@ export function processSqlLog(input: string): string {
         let safeValue: string;
 
         if (typeof value === 'string') {
-            safeValue = `'${value}'`;
+            // Escape single quotes by doubling them (standard SQL string escaping)
+            safeValue = `'${value.replace(/'/g, "''")}'`;
         } else if (value === null) {
             safeValue = "NULL";
         } else {

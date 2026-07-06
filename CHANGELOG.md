@@ -4,6 +4,13 @@ All notable changes to the "Log to Runnable SQL (SQLAlchemy)" extension will be 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.2] - 2026-07-06
+
+### Fixed
+
+- Escape single quotes in string parameters so values like `O'Brien` produce valid, runnable SQL
+- Parse Python `datetime.datetime/date/time(...)` parameters and convert them to SQL datetime strings (previously left as unreplaced placeholders)
+
 ## [1.0.0] - 2024-12-24
 
 ### Added

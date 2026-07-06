@@ -1,6 +1,14 @@
 .vscode/**
 .vscode-test/**
+.vscode-test.mjs
+log-to-runnable-sql/**
 src/**
+out/**
+node_modules/**
+dist/**/*.map
+.claude/**
+esbuild.js
+eslint.config.mjs
 .gitignore
 .git/**
 vsc-extension-quickstart.md
